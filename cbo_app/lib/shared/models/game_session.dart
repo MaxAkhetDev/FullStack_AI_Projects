@@ -26,9 +26,11 @@ class GameSession {
   factory GameSession.initial(String code, String mode, List<List<int>> grid) => GameSession(
         code: code,
         mode: mode,
-        grid: grid,
+        grid: List<List<int>>.unmodifiable(
+          grid.map((row) => List<int>.unmodifiable(row)).toList(),
+        ),
         status: GameStatus.lobby,
-        players: {},
+        players: const {},
         currentRound: 0,
         rollsRemaining: mode == 'Débutant' ? 4 : 3,
       );
@@ -45,7 +47,7 @@ class GameSession {
         mode: mode,
         grid: grid,
         status: status ?? this.status,
-        players: players ?? this.players,
+        players: players != null ? Map<String, Player>.unmodifiable(players) : this.players,
         currentRound: currentRound ?? this.currentRound,
         currentPlayerId: currentPlayerId ?? this.currentPlayerId,
         rollsRemaining: rollsRemaining ?? this.rollsRemaining,

@@ -18,7 +18,9 @@ class Player {
         name: json['name'] as String,
         score: json['score'] as int,
         level: json['level'] as String,
-        rounds: List<Map<String, dynamic>>.from(json['rounds'] as List),
+        rounds: List<Map<String, dynamic>>.unmodifiable(
+          (json['rounds'] as List).map((e) => Map<String, dynamic>.from(e as Map)).toList(),
+        ),
       );
 
   Player copyWith({String? name, int? score, String? level, List<Map<String, dynamic>>? rounds}) =>

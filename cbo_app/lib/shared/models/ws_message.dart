@@ -1,5 +1,6 @@
 class WsMessage {
   final String type;
+  // payload is dynamic: different WS message types carry different payload shapes
   final dynamic payload;
 
   const WsMessage({required this.type, required this.payload});
