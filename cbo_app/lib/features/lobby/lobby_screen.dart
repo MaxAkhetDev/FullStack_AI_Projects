@@ -49,7 +49,7 @@ class _LobbyScreenState extends ConsumerState<LobbyScreen> {
         child: sessionAsync.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (e, _) => Center(
-            child: Text('Erreur: $e', style: const TextStyle(color: kOnSurface)),
+            child: Text('Erreur: $e', style: Theme.of(context).textTheme.bodyMedium),
           ),
           data: (session) {
             if (session == null) {
