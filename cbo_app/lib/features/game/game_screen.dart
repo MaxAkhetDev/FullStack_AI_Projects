@@ -62,26 +62,31 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   Widget build(BuildContext context) {
     final session = ref.watch(gameProvider);
 
+    // Listen for game over — navigate exactly once
+    ref.listen<GameSession?>(gameProvider, (previous, next) {
+      if (next?.status == GameStatus.finished &&
+          previous?.status != GameStatus.finished) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            context.go(
+              '/results/${widget.sessionCode}',
+              extra: {'players': next!.players.values.toList()},
+            );
+          }
+        });
+      }
+    });
+
     if (session == null) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );
     }
 
-    // Navigate to results when game finishes
-    if (session.status == GameStatus.finished) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          context.go(
-            '/results/${widget.sessionCode}',
-            extra: {'players': session.players.values.toList()},
-          );
-        }
-      });
-    }
-
     final isMyTurn = session.currentPlayerId == widget.playerId;
-    final rolls = ref.read(gameProvider.notifier).currentRolls;
+    // currentRolls updates synchronously with state changes, safe to read after watch triggers rebuild
+    final notifier = ref.read(gameProvider.notifier);
+    final rolls = notifier.currentRolls;
     final lastRoll = rolls.isNotEmpty ? rolls.last : null;
 
     return Scaffold(
